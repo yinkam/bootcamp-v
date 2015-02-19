@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>Chart Application</title>
+		<script type="text/javascript" src="script.js"></script>
 		<style>
 			body{
             	width: 800px;
@@ -61,16 +62,16 @@
 	</head>
 
 	<body>
-      	<h1> Chart</h1>
+		<h1> Chart Application</h1>
       
 		<div class="data">
-          
-          <p> Select Chart </p>
-          <input type="radio" name="chart" value="barchart">Bar Chart 
-          <input type="radio" name="chart" value="piechart">Pie Chart
-          <input type="radio" name="chart" value="linechart">Line Chart
-          <input type="radio" name="chart" value="histograam">Histogram
-          <br>
+        <p> Select Chart </p>
+        <select  id="charts">
+            <option value="barchart">Bar Chart</option>
+            <option value="piechart">Pie Chart</option>
+            <option value="linechart">Line Chart</option>
+            <option value="histogram">Histogram</option>           
+          </select>
           <p>Graph Title<br><input type="text" id="title"></p>                  
           
           <p>Data Set:</p>
@@ -96,7 +97,7 @@
           
           <br>
           <input type="reset" value="RESET">
-          <input type="button" onClick="plotGraph()" value="PLOT">
+          <input type="button" onclick="plotGraph()" value="PLOT">
       		
       	</div>
 		
@@ -107,167 +108,7 @@
 		</div>
 
 		<script>
-          //funtion to get data from inputs and plot chart based on selection
-          function plotGraph(){
-            var node_name = document.getElementsByClassName('name');
-          	var node_value = document.getElementsByClassName('values');
-         	var dataset = [], data ={};
-            var title = document.getElementById("title").value;
-          
-            for(var s in node_value){
-              data[s].name = nodes.getElementsByClassName('name')[s].value;
-              data[s].value = nodes.getElementsByClassName('values')[s].value;
-              dataset.push(data);
-             }
-            /* switch (){
-              case 'barchart':
-                barchart();
-              case 'piechart':
-                piechart();
-              case 'linechart':
-                linechart();
-              case 'histogram:
-                histogram();
-            }*/
-          }
- 
-            
-          var dataset = [{name: 'Austin', population: 732 },
-						{name: "Fort Worth", population: 577},
-                         {name: "Fort Worth", population: 237},
-                         {name: "Fort Worth", population: 457},
-						{name: "Lubbock", population: 436},
-                        {name: 'Austin', population: 732 },
-						{name: "Fort Worth", population: 577},
-                         {name: "Fort Worth", population: 237},
-                         {name: "Fort Worth", population: 457},
-						{name: "Lubbock", population: 436}]; 
-			var sum = 0;			    
-			for (var s in dataset){
-			    sum += dataset[s].population;
-			}
-			//calculate number percentage and add to dataset
-			for(var s in dataset){
-            	dataset[s].percent = Math.round((dataset[s].population/sum)*100);
-       		}
 
-
-       		//Variable for plotting Chars
-       	   //function to create item input list base of number of items
-          function itemlist() {
-                var no = document.getElementById("items");
-                var option = no.options[no.selectedIndex].value;
-            	var list = document.getElementById("list");            
-            	list.innerHTML='';              
-            //list.appendChild(document.createTextNode("Item Name:  "));
-            //list.appendChild(document.createTextNode("Item Value:"));
-            for (var i=0; i<option; i++){
-              	var input_label = document.createElement("INPUT");
-                var input_value = document.createElement("INPUT");            
-                input_label.setAttribute("type", "text");
-              	input_label.setAttribute("class", "name")
-            	input_value.setAttribute("type", "number");
-              	input_value.setAttribute("class", "values");
-              	list.appendChild(document.createElement("BR"));
-                list.appendChild(document.createTextNode(i+1+'. \t'));
-              	list.appendChild(input_label);
-                list.appendChild(input_value);            
-            }
-           		
-          }
-	
-         
-          //function to plot bar chat			  
-			function barchart(dataset) {
-				var canvas = document.getElementById('chart');
-				var context = canvas.getContext('2d');
-				var startx = 80;  			        
-				context.clearRect(0, 0, canvas.width, canvas.height);
-      			plotaxis();
-                
-				for(var s in dataset){			    
-					context.beginPath();
-					context.rect(startx,500, 30,-dataset[s].percent*10)
-					context.fillStyle = '#F44336';
-					context.fill();
-
-					startx += 50;
-				}			        
-			}
-		    			
-          //function to plot pie chat from dataset
-			function piechart(dataset) {
-				var canvas = document.getElementById('chart');
-				var context = canvas.getContext('2d');
-				var chartcolors = ['#F44336','#9C27B0', '#3F51B5', '#03A9F4', '#009688', 
-									'#8BC34A', '#FFEB3B', '#FF9800', '#795548', '#607D8B']
-			    var x = canvas.width/2;
-			    var y = canvas.height/2;
-			    var radius = y-100;	
-			    var startAngle = 0;
-
-			    //convert percentage in radians and plot graph	
-				var canvas = document.getElementById('chart');
-				var context = canvas.getContext('2d');
-				context.clearRect(0, 0, canvas.width, canvas.height);
-				
-			    for(var s in dataset){
-			        dataset[s].radian = (dataset[s].percent/100)*Math.PI*2;
-					context.fillStyle = chartcolors[s];
-			        context.beginPath();
-			      	context.arc(x, y, radius, startAngle,startAngle+dataset[s].radian, false);
-			       	context.lineTo(x,y);
-			       	context.fill();
-			       	startAngle += dataset[s].radian;
-			    }    
-			}
-          
-			
-          //function to plot line chat from dataset
-			function linechart(dataset) {
-				var canvas = document.getElementById('chart');
-				var context = canvas.getContext('2d');
-			    var startx = 50;
-							
-				context.clearRect(0, 0, canvas.width, canvas.height);
-				plotaxis();
-			    context.beginPath();
-				
-			    //convert percentage in radians and plot graph			       
-				for(var s in dataset){	   
-					context.lineTo(startx, (500-dataset[s].percent*5));//y=axis numbers multiplied by 5 to improve scaling
-					context.lineWidth = 3;
-					context.strokeStyle = '#F44336';
-					context.stroke();
-					startx += 50;
-				}	
-			}
-			
-          //Function to plot axis with labels from data set
-			function plotaxis(title){
-				var canvas = document.getElementById('chart');
-				var context = canvas.getContext('2d');
-			    var startx = 50;
-              	var title = document.getElementById('title').value;
-				context.clearRect(0, 0, canvas.width, canvas.height);
-              	
-              	context.font = '30pt Helvetica';
-      			context.fillText(title, 150, 100);
-
-				context.beginPath();
-				context.moveTo(startx, 100);
-				context.lineTo(startx, 500);
-				context.lineTo(600, 500);
-				context.lineWidth = 2;
-				context.strokeStyle = '#999999';
-				context.stroke();
-			}
-			
-          //piechart(dataset);
-          barchart(dataset);
-          //linechart(dataset);
-		
-		
 		</script>	
 	</body>
 </html>
